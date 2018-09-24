@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         blue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((Button)v).setTextColor(Color.BLUE));
+                ((Button)v).setTextColor(Color.BLUE);
                 red.setText(blue.getText());
             }
         });
