@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/btn1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="34dp"
+        android:layout_marginTop="99dp"
+        android:onClick="toggle1"
+        android:text="BUTTON1" />
+
+    <TextView
+        android:id="@+id/dis1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn1"
+        android:layout_alignStart="@+id/btn1"
+        android:layout_marginBottom="-99dp"
+        android:text='ON' />
+
+    <TextView
+        android:id="@+id/dis4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/btn1"
+        android:layout_marginBottom="25dp"
+        android:text="OFF" />
+
+    <Button
+        android:id="@+id/btn4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/btn1"
+        android:layout_below="@+id/dis4"
+        android:layout_marginTop="-93dp"
+        android:onClick="toggle4"
+        android:text="BUTTON4" />
+
+    <Button
+        android:id="@+id/btn2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/btn1"
+        android:layout_marginEnd="35dp"
+        android:onClick="toggle2"
+        android:text="BUTTON2" />
+
+    <TextView
+        android:id="@+id/dis2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn1"
+        android:layout_alignEnd="@+id/btn2"
+        android:layout_marginBottom="-99dp"
+        android:text="OFF" />
+
+    <TextView
+        android:id="@+id/dis5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/btn2"
+        android:layout_alignTop="@+id/dis4"
+        android:text="OFF" />
+
+    <Button
+        android:id="@+id/btn5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/dis2"
+        android:layout_below="@+id/dis4"
+        android:layout_marginTop="-93dp"
+        android:onClick="toggle5"
+        android:text="BUTTON5" />
+
+    <Button
+        android:id="@+id/btn3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="208dp"
+        android:onClick="toggle3"
+        android:text="BUTTON3" />
+
+    <TextView
+        android:id="@+id/dis3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="183dp"
+        android:text="OFF" />
+</RelativeLayout>
