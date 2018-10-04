@@ -43,11 +43,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    public void onClick(View v) {
-        if (text2.getText().equals("Not Clicked"))
-            text2.setText("Clicked");
-        else
-            text2.setText("Not Clicked");
-    }
 }
