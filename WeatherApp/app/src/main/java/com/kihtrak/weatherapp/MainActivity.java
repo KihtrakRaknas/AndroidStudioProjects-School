@@ -1,12 +1,27 @@
 package com.kihtrak.weatherapp;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -16,6 +31,8 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.provider.ContactsContract.CommonDataKinds.*;
 import static android.provider.ContactsContract.CommonDataKinds.Website.*;
@@ -28,21 +45,68 @@ public class MainActivity extends AppCompatActivity {
 
     JSONObject weather;
 
+    JSONArray listz;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new AsyncThread().execute();
+        String zip = getIntent().getStringExtra("zip");
+
+        new AsyncThread().execute(zip);
+
+        ListView out = findViewById(R.id.list);
+
+
+
+        CustomAdapter CustomAdapter = new CustomAdapter(this,R.layout.listlay,listz);
+        out.setAdapter(CustomAdapter);
+        out.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //pos = position;
+                //set(pos);
+            }
+        });
+        //set(pos);
     }
 
-    public class AsyncThread extends AsyncTask<Void,Void,Void> {
+    public class CustomAdapter extends ArrayAdapter {
+        Context context;
+        ArrayList weathers;
+        int resource;
+        public CustomAdapter(@NonNull Context context, int resource, @NonNull List objects) {
+            super(context, resource, objects);
+
+            this.context = context;
+            weathers = objects;
+            this.resource = resource;
+        }
+
+        @NonNull
+        @Override
+        public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+            View adapterLayout = layoutInflater.inflate(resource,null);
+            ImageView img = adapterLayout.findViewById(R.id.img);
+            TextView txt = adapterLayout.findViewById(R.id.txt);
+            //txt.setText(colorList.get(position).name);
+            //
+            // img.setImageResource(colorList.get(position).img);
+            return adapterLayout;
+        }
+
+    }
+
+
+    public class AsyncThread extends AsyncTask<String,Void,Void> {
 
         @Override
-        protected Void doInBackground(Void... voids) {
-                try {
-                    URL url = new URL("http://api.openweathermap.org/data/2.5/forecast?APPID=700fece42f9b9b804f506a72fd6cc78e&zip=94040,us");
-                    URLConnection test = url.openConnection();
+        protected Void doInBackground(String... zoop) {
+            try {
+                URL url = new URL("http://api.openweathermap.org/data/2.5/forecast?APPID=700fece42f9b9b804f506a72fd6cc78e&zip="+zoop[0]);
+                URLConnection test = url.openConnection();
 
                     /*URLConnection test = new URLConnection(url) {
                         @Override
@@ -50,16 +114,16 @@ public class MainActivity extends AppCompatActivity {
 
                         }
                     };*/
-                    InputStream stream = test.getInputStream();
-                    BufferedReader buffread = new BufferedReader(new InputStreamReader(stream));
-                    String data = buffread.readLine();
-                    Log.d("datatest",data);
+                InputStream stream = test.getInputStream();
+                BufferedReader buffread = new BufferedReader(new InputStreamReader(stream));
+                String data = buffread.readLine();
+                Log.d("datatest",data);
 
-                    weather = new JSONObject(data);
+                weather = new JSONObject(data);
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             return null;
         }
@@ -68,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if(weather!=null){
-                weather
+                //weather.list
             }
         }
     }
