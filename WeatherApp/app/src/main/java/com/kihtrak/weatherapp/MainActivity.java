@@ -47,6 +47,10 @@ public class MainActivity extends AppCompatActivity {
 
     JSONArray listz;
 
+    ArrayList<weatherData> weatherList = new ArrayList<weatherData>();
+
+    CustomAdapter CustomAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        CustomAdapter CustomAdapter = new CustomAdapter(this,R.layout.listlay,listz);
+        CustomAdapter = new CustomAdapter(this,R.layout.listlay,weatherList);
         out.setAdapter(CustomAdapter);
         out.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -74,9 +78,10 @@ public class MainActivity extends AppCompatActivity {
 
     public class CustomAdapter extends ArrayAdapter {
         Context context;
-        ArrayList weathers;
+        ArrayList<weatherData> weathers;
         int resource;
-        public CustomAdapter(@NonNull Context context, int resource, @NonNull List objects) {
+
+        public CustomAdapter(@NonNull Context context, int resource, @NonNull ArrayList objects) {
             super(context, resource, objects);
 
             this.context = context;
@@ -91,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             View adapterLayout = layoutInflater.inflate(resource,null);
             ImageView img = adapterLayout.findViewById(R.id.img);
             TextView txt = adapterLayout.findViewById(R.id.txt);
-            //txt.setText(colorList.get(position).name);
+            txt.setText(""+weathers.get(position).temp);
             //
             // img.setImageResource(colorList.get(position).img);
             return adapterLayout;
@@ -105,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(String... zoop) {
             try {
-                URL url = new URL("http://api.openweathermap.org/data/2.5/forecast?APPID=700fece42f9b9b804f506a72fd6cc78e&zip="+zoop[0]);
+                URL url = new URL("http://api.openweathermap.org/data/2.5/forecast?APPID=700fece42f9b9b804f506a72fd6cc78e&zip="+zoop[0]+"&&units=imperial");
                 URLConnection test = url.openConnection();
 
                     /*URLConnection test = new URLConnection(url) {
@@ -131,10 +136,64 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            try {
+                listz = weather.getJSONArray("list");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             if(weather!=null){
-                //weather.list
+                for(int i =0; i!=listz.length();i++){
+                    try {
+                        weatherList.add(new weatherData(MainActivity.this,listz.getJSONObject(i)));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                CustomAdapter.notifyDataSetChanged();
             }
         }
+    }
+
+    public class weatherData{
+        String time;
+        int temp;
+        int tempMin;
+        int tempMax;
+        String weatherState;
+        String weatherDesc;
+        int icon;
+        public weatherData(Context context, JSONObject obj){
+            try {
+                time = obj.getString("dt_txt");
+                JSONObject main = obj.getJSONObject("main");
+                temp = main.getInt("temp");
+                tempMin = main.getInt("temp_min");
+                tempMax = main.getInt("temp_max");
+                JSONArray weatherObj = obj.getJSONArray("weather");
+                weatherState = weatherObj.getJSONObject(0).getString("main");
+                weatherDesc = weatherObj.getJSONObject(0).getString("description");
+                String iconNum = "icon" + weatherObj.getJSONObject(0).getString("icon");
+
+                int icon = context.getResources().getIdentifier(
+                        iconNum,
+                        "drawable",
+                        context.getPackageName()
+                );
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        int getTemp(){
+            return temp;
+        }
+
+        String getTime(){
+            return time;
+        }
+
     }
 
 }

@@ -34,11 +34,11 @@ public class StartUp extends AppCompatActivity {
         setContentView(R.layout.activity_start_up);
 
         EditText zip = findViewById(R.id.zipText);
-        Button done = findViewById(R.id.done);
+        Button finished = findViewById(R.id.done);
 
         intent = new Intent(this, MainActivity.class);
 
-        done.setOnClickListener(new View.OnClickListener() {
+        finished.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 done = true;
