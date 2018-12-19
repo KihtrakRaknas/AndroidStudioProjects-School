@@ -39,7 +39,7 @@
         android:layout_gravity="center"
         android:layout_weight="1"
         android:paddingTop="30dp"
-        android:text="TextView"
+        android:text="Enter a zip code"
         android:textSize="30sp" />
 
 </LinearLayout>

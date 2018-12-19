@@ -110,6 +110,8 @@ public class StartUp extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 //weather
+            }else{
+                output.setText("Enter a valid zip code");
             }
         }
     }

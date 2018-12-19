@@ -96,9 +96,9 @@ public class MainActivity extends AppCompatActivity {
             View adapterLayout = layoutInflater.inflate(resource,null);
             ImageView img = adapterLayout.findViewById(R.id.img);
             TextView txt = adapterLayout.findViewById(R.id.txt);
-            txt.setText(""+weathers.get(position).temp);
+            txt.setText(""+weathers.get(position).weatherState);
             //
-            // img.setImageResource(colorList.get(position).img);
+            img.setImageResource(Integer.parseInt(weathers.get(position).iconStr));
             return adapterLayout;
         }
 
@@ -161,7 +161,9 @@ public class MainActivity extends AppCompatActivity {
         int tempMax;
         String weatherState;
         String weatherDesc;
+        String iconNum;
         int icon;
+        String iconStr;
         public weatherData(Context context, JSONObject obj){
             try {
                 time = obj.getString("dt_txt");
@@ -172,13 +174,15 @@ public class MainActivity extends AppCompatActivity {
                 JSONArray weatherObj = obj.getJSONArray("weather");
                 weatherState = weatherObj.getJSONObject(0).getString("main");
                 weatherDesc = weatherObj.getJSONObject(0).getString("description");
-                String iconNum = "icon" + weatherObj.getJSONObject(0).getString("icon");
-
+                iconNum = "icon" + weatherObj.getJSONObject(0).getString("icon");
+                Log.d("TEST",iconNum);
                 int icon = context.getResources().getIdentifier(
                         iconNum,
                         "drawable",
                         context.getPackageName()
                 );
+                Log.d("TESTicon",""+icon);
+                iconStr = ""+ icon;
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -186,8 +190,8 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        int getTemp(){
-            return temp;
+        int getIcon(){
+            return icon;
         }
 
         String getTime(){
