@@ -23,6 +23,7 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,8 +32,11 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static android.provider.ContactsContract.CommonDataKinds.*;
 import static android.provider.ContactsContract.CommonDataKinds.Website.*;
@@ -94,11 +98,37 @@ public class MainActivity extends AppCompatActivity {
         public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             View adapterLayout = layoutInflater.inflate(resource,null);
+
             ImageView img = adapterLayout.findViewById(R.id.img);
             TextView txt = adapterLayout.findViewById(R.id.txt);
-            txt.setText(""+weathers.get(position).weatherState);
-            //
-            img.setImageResource(Integer.parseInt(weathers.get(position).iconStr));
+            TextView date = adapterLayout.findViewById(R.id.Date);
+            TextView high = adapterLayout.findViewById(R.id.high);
+            TextView low = adapterLayout.findViewById(R.id.low);
+            /*int breaks=0;
+            for(int i =0; i<position;i++){
+                if(i!=0&&weathers.get(i-1).getTime().substring(0,12)!=weathers.get(i).getTime().substring(0,12)){
+                    breaks++;
+                }
+                Log.d("timeTEST",weathers.get(i).getTime().substring(0,12));
+            }
+            int pos = position+breaks;
+            if(pos!=0&&weathers.get(pos-1).getTime().substring(0,12)==weathers.get(pos).getTime().substring(0,12)){
+                txt.setText(weathers.get(pos).timeFormated.getMonth()+" / "+weathers.get(pos).timeFormated.getDate());
+                img.setImageResource(0);
+                date.setText("");
+                high.setText("");
+                low.setText("");
+
+            }else {
+*/
+            int pos = position;
+                txt.setText("" + weathers.get(pos).weatherState);
+                img.setImageResource(Integer.parseInt(weathers.get(position).iconStr));
+                date.setText("" + weathers.get(pos).getTime());
+                high.setText("" + weathers.get(pos).tempMax + " °F");
+                low.setText("" + weathers.get(pos).tempMin + " °F");
+            //}
+
             return adapterLayout;
         }
 
@@ -151,11 +181,29 @@ public class MainActivity extends AppCompatActivity {
                 }
                 CustomAdapter.notifyDataSetChanged();
             }
+            TextView message = findViewById(R.id.message);
+            if(weatherList.get(0).weatherState.equals("Rain"))
+                message.setText("Better turn off that console, its going to rain!");
+            else if(weatherList.get(0).weatherState.equals("Clouds"))
+                message.setText("Better turn on that console, its going to be cloudy outside!");
+            else if(weatherList.get(0).weatherState.equals("Clear"))
+                message.setText("Stop playing video games and play outside");
+            else
+                message.setText("404 error. Unusual weather activity detected");
+
+            ImageView img = findViewById(R.id.mainImg);
+            img.setImageResource(Integer.parseInt(weatherList.get(0).iconStr));
+
+            TextView txt = findViewById(R.id.mainTxt);
+            txt.setText("Current Temp: "+ weatherList.get(0).temp+" °F");
+
+            weatherList.remove(0);
         }
     }
 
     public class weatherData{
         String time;
+        Date timeFormated;
         int temp;
         int tempMin;
         int tempMax;
@@ -164,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
         String iconNum;
         int icon;
         String iconStr;
+        Long timeLong;
         public weatherData(Context context, JSONObject obj){
             try {
                 time = obj.getString("dt_txt");
@@ -183,6 +232,8 @@ public class MainActivity extends AppCompatActivity {
                 );
                 Log.d("TESTicon",""+icon);
                 iconStr = ""+ icon;
+                timeLong = obj.getLong("dt")*1000L;
+                timeFormated = new Date(timeLong);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -195,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         String getTime(){
-            return time;
+            return timeFormated.toLocaleString();
         }
 
     }
