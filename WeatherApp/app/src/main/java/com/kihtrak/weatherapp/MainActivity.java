@@ -121,7 +121,10 @@ public class MainActivity extends AppCompatActivity {
 
             }else {
 */
-            int pos = position;
+            int pos = position
+
+
+                    ;
                 txt.setText("" + weathers.get(pos).weatherState);
                 img.setImageResource(Integer.parseInt(weathers.get(position).iconStr));
                 date.setText("" + weathers.get(pos).getTime());
