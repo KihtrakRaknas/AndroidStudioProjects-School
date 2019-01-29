@@ -1,5 +1,7 @@
 package com.example.kihtrakraknas.rotiroller;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -7,10 +9,12 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
@@ -29,6 +33,28 @@ public class MainActivity extends AppCompatActivity {
     ConstraintLayout layout;
     TextView clicksTextView;
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Log.d("testd","ded");
+
+        Context context = this;
+        SharedPreferences sharedPref = context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putString("score", ""+clicks);
+        editor.putString("rotomatics", ""+rotomatics);
+        editor.putString("aunties", ""+aunties);
+
+        editor.commit();
+
+        Log.d("testd","test "+sharedPref.getString("score", "0"));
+
+        Log.d("testd","test2"+clicks);
+
+    }
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -36,10 +62,16 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
+
                     ((ImageView)findViewById(R.id.ball)).setVisibility(View.VISIBLE);
                     findViewById(R.id.shop).setVisibility(View.INVISIBLE);
+                    ((ImageView)findViewById(R.id.paneer)).setVisibility(View.VISIBLE);
                     return true;
                 case R.id.navigation_dashboard:
+                    ((ImageView)findViewById(R.id.ball)).clearAnimation();
+                    ((ImageView)findViewById(R.id.balen)).clearAnimation();
+                    ((ImageView)findViewById(R.id.paneer)).clearAnimation();
+                    ((ImageView)findViewById(R.id.paneer)).setVisibility(View.INVISIBLE);
                     ((ImageView)findViewById(R.id.ball)).setVisibility(View.INVISIBLE);
                     findViewById(R.id.shop).setVisibility(View.VISIBLE);
                     return true;
@@ -52,6 +84,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SharedPreferences sharedPref = this.getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        Log.d("testd","test "+sharedPref.getString("score", "0"));
+            clicks = Double.parseDouble(sharedPref.getString("score", "0"));
+        rotomatics = Integer.parseInt(sharedPref.getString("rotomatics", "0"));
+        aunties = Integer.parseInt(sharedPref.getString("aunties", "0"));
 
         balen = findViewById(R.id.balen);
         balen.setVisibility(View.INVISIBLE);//View.VISIBLE
@@ -75,20 +113,26 @@ public class MainActivity extends AppCompatActivity {
         final ScaleAnimation clickAnim = new ScaleAnimation(.8f,1f,.8f,1f,Animation.RELATIVE_TO_SELF,.5f,Animation.RELATIVE_TO_SELF,.5f);
         clickAnim.setDuration(200);
 
-        final TranslateAnimation balenRoll = new TranslateAnimation(Animation.RELATIVE_TO_PARENT,0f,Animation.RELATIVE_TO_PARENT,0f,Animation.RELATIVE_TO_PARENT,.15f,Animation.RELATIVE_TO_PARENT,.5f);
+        final TranslateAnimation balenRoll = new TranslateAnimation(Animation.RELATIVE_TO_PARENT,0f,Animation.RELATIVE_TO_PARENT,0f,Animation.RELATIVE_TO_PARENT,.1f,Animation.RELATIVE_TO_PARENT,.65f);
         balenRoll.setDuration(200);
 
         final TranslateAnimation floatUp = new TranslateAnimation(Animation.RELATIVE_TO_PARENT,0f,Animation.RELATIVE_TO_PARENT,0f,Animation.RELATIVE_TO_PARENT,0f,Animation.RELATIVE_TO_PARENT,-.2f);
-        floatUp.setDuration(200);
+        floatUp.setDuration(100);
 
         final Animation fadeOut = new AlphaAnimation(1, 0);
         fadeOut.setDuration(400);
 
         final Animation fadeIn = new AlphaAnimation(0, 1);
-        fadeOut.setDuration(800);
+        fadeIn.setDuration(800);
 
         final Animation hide = new AlphaAnimation(0, 0);
-        fadeOut.setDuration(1);
+        hide.setDuration(1);
+
+        RotateAnimation rot = new RotateAnimation(0,3590000,Animation.RELATIVE_TO_SELF,.5f,Animation.RELATIVE_TO_SELF,.5f);
+        rot.setDuration(3000000);
+        rot.setRepeatCount(Animation.INFINITE);
+        ((ImageView)findViewById(R.id.paneer)).startAnimation(rot);
+
 
 
         final ScaleAnimation bigAnim = new ScaleAnimation(1f,1.2f,1f,1.2f,Animation.RELATIVE_TO_SELF,.5f,Animation.RELATIVE_TO_SELF,.5f);
@@ -131,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         layout.removeView(roti);
                     }
-                }, 400);
+                }, 100);
 
                 floatUp.setAnimationListener(new Animation.AnimationListener() {
                     @Override
@@ -260,6 +304,23 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 int temp = (int)Math.round(clicks);
                 clicksTextView.setText(""+temp);
+
+                final Animation fadeIn = new AlphaAnimation(0, 1);
+                fadeIn.setDuration(800);
+
+                if(clicks>=100) {
+                    ((ImageView)findViewById(R.id.auntie)).setAlpha(1f);
+
+                    ((ImageView)findViewById(R.id.roto)).setAlpha(1f);
+                }else if(clicks>=10) {
+                    ((ImageView)findViewById(R.id.roto)).setAlpha(1f);
+
+                    ((ImageView)findViewById(R.id.auntie)).setAlpha(.1f);
+
+                }else{
+                    ((ImageView)findViewById(R.id.auntie)).setAlpha(.1f);
+                    ((ImageView)findViewById(R.id.roto)).setAlpha(.1f);
+                }
             }
         });
 
