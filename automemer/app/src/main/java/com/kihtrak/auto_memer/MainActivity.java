@@ -29,9 +29,21 @@ public class MainActivity extends AppCompatActivity {
                 SmsMessage smsArr[] = new SmsMessage[objs.length];
                 for(int i =0; i!=objs.length;i++){
                     smsArr[i] = SmsMessage.createFromPdu((byte[])objs[i],intent.getStringExtra("format"));
-                    String address = smsArr[i].getOriginatingAddress();
+                    final String address = smsArr[i].getOriginatingAddress();
                     String message = smsArr[i].getMessageBody();
                     Log.d("TESTS","message: "+message);
+
+                    final SmsManager man = SmsManager.getDefault();
+                    final String sendMessage = "test";
+                    Handler hand = new Handler();
+
+                    hand.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d("TESTS","test");
+                            man.sendTextMessage(address, null,sendMessage,null,null);
+                        }
+                    },1000);
 
                 }
             }
@@ -60,17 +72,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
          //= new BroadcastReceiver();
-        SmsManager man = SmsManager.getDefault();
 
-        Handler hand = new Handler();
-
-        hand.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Log.d("TESTS","test");
-                //man.sendTextMessage();
-            }
-        },1000);
 
 
     }
