@@ -1,4 +1,4 @@
-package com.kihtrak.auto_memer;
+package com.kihtrak.automemer;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -15,8 +15,6 @@ import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.TextView;
-
-import com.kihtrak.autonmemer3.R;
 
 public class MainActivity extends AppCompatActivity {
     BroadcastReceiver receiver;
@@ -195,4 +193,3 @@ public class MainActivity extends AppCompatActivity {
 
     }
 }
-
