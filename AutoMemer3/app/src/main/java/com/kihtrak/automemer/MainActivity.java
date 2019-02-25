@@ -26,9 +26,46 @@ public class MainActivity extends AppCompatActivity {
 
     ArrayList<String> memez = new ArrayList<String>();
 
+    public void sendMessage(final String sendMessage,final String address){
+        final SmsManager man = SmsManager.getDefault();
+        Handler hand = new Handler();
+        hand.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("TESTS", "test");
+                man.sendTextMessage(address, null, sendMessage, null, null);
+            }
+        }, delay);
+    }
+
+    public void populateMemez(){
+        while(memez.size()>0) {
+            memez.remove(0);
+        }
+
+        memez.add("https://red.kihtrak.com/r");
+        memez.add("https://red.kihtrak.com/meme1");
+        memez.add("https://red.kihtrak.com/meme2");
+        memez.add("https://red.kihtrak.com/meme3");
+        memez.add("https://red.kihtrak.com/meme4");
+        memez.add("https://red.kihtrak.com/meme5");
+        memez.add("https://red.kihtrak.com/meme6");
+        memez.add("https://red.kihtrak.com/meme7");
+        memez.add("https://red.kihtrak.com/meme8");
+        memez.add("https://red.kihtrak.com/meme9");
+        memez.add("https://red.kihtrak.com/meme10");
+    }
+
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        //= new BroadcastReceiver();
+
+        populateMemez();
+
+
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -80,8 +117,8 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                     }else if(state == "Received Postitive Responce") {
-                            sendMessage("So, did you enjoy it?",address);
-                            state = "Awaiting Response to \"So, did you enjoy it?\"";
+                        sendMessage("So, did you enjoy it?",address);
+                        state = "Awaiting Response to \"So, did you enjoy it?\"";
                     }else if(state == "Awaiting Response to \"So, did you enjoy it?\"") {
                         if(memez.size()>0) {
                             if ((message.toLowerCase().contains("yes") || message.toLowerCase().contains("sure")|| message.toLowerCase().contains("ya")|| message.toLowerCase().contains("yeet"))) {
@@ -129,47 +166,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d("TESTS","reg");
         }
 
-
-    }
-
-    public void sendMessage(final String sendMessage,final String address){
-        final SmsManager man = SmsManager.getDefault();
-        Handler hand = new Handler();
-        hand.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Log.d("TESTS", "test");
-                man.sendTextMessage(address, null, sendMessage, null, null);
-            }
-        }, delay);
-    }
-
-    public void populateMemez(){
-        while(memez.size()>0) {
-            memez.remove(0);
-        }
-
-        memez.add("https://red.kihtrak.com/r");
-        memez.add("https://red.kihtrak.com/meme1");
-        memez.add("https://red.kihtrak.com/meme2");
-        memez.add("https://red.kihtrak.com/meme3");
-        memez.add("https://red.kihtrak.com/meme4");
-        memez.add("https://red.kihtrak.com/meme5");
-        memez.add("https://red.kihtrak.com/meme6");
-        memez.add("https://red.kihtrak.com/meme7");
-        memez.add("https://red.kihtrak.com/meme8");
-        memez.add("https://red.kihtrak.com/meme9");
-        memez.add("https://red.kihtrak.com/meme10");
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        //= new BroadcastReceiver();
-
-        populateMemez();
 
 
 
