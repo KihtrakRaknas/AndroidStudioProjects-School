@@ -13,7 +13,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -25,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     int failedRes = 0;
 
     ArrayList<String> memez = new ArrayList<String>();
+    ArrayList<String> userMemes = new ArrayList<String>();
 
     public void sendMessage(final String sendMessage,final String address){
         final SmsManager man = SmsManager.getDefault();
@@ -54,7 +59,13 @@ public class MainActivity extends AppCompatActivity {
         memez.add("https://red.kihtrak.com/meme8");
         memez.add("https://red.kihtrak.com/meme9");
         memez.add("https://red.kihtrak.com/meme10");
+
+        for(int i =0;i!=userMemes.size();i++){
+            memez.add(userMemes.get(i));
+        }
     }
+
+    String link = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +75,23 @@ public class MainActivity extends AppCompatActivity {
         //= new BroadcastReceiver();
 
         populateMemez();
+
+        ((EditText)findViewById(R.id.editText)).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                link = s.toString();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
 
         receiver = new BroadcastReceiver() {
@@ -179,5 +207,10 @@ public class MainActivity extends AppCompatActivity {
 
     public class hand extends Handler{
 
+    }
+
+    public void addMeme(View v){
+        userMemes.add(link);
+        memez.add(link);
     }
 }
