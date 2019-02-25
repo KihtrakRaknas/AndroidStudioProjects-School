@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                     }else if(state == "Awaiting Response to \"wanna se something kewl\"") {
-                        if((message.toLowerCase().contains("yes")||message.toLowerCase().contains("sure")||message.toLowerCase().contains("ok"))) {
+                        if((message.toLowerCase().contains("yes")||message.toLowerCase().contains("sure")||message.toLowerCase().contains("ok")|| message.toLowerCase().contains("ya")|| message.toLowerCase().contains("yeet"))) {
                             String meme = memez.remove( (int)(Math.random()*memez.size()) );
                             sendMessage("Click this link: "+meme+" \nText me back once you do",address);
                             state = "Received Postitive Responce";
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                             state = "Awaiting Response to \"So, did you enjoy it?\"";
                     }else if(state == "Awaiting Response to \"So, did you enjoy it?\"") {
                         if(memez.size()>0) {
-                            if ((message.toLowerCase().contains("yes") || message.toLowerCase().contains("sure"))) {
+                            if ((message.toLowerCase().contains("yes") || message.toLowerCase().contains("sure")|| message.toLowerCase().contains("ya")|| message.toLowerCase().contains("yeet"))) {
                                 sendMessage("Great! " + "Wanna see something else cool?", address);
                                 failedRes = 0;
                                 state = "Awaiting Response to \"wanna se something kewl\"";
@@ -175,12 +175,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public class res extends BroadcastReceiver{
-        @Override
-        public void onReceive(Context context, Intent intent) {
 
-
-        }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(receiver);
     }
 
     public class hand extends Handler{
