@@ -16,34 +16,24 @@ import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener{
+public class MainActivity extends AppCompatActivity {
     //Code from this program has been used from Beginning Android Games
     //Review SurfaceView, Canvas, continue
 
     GameSurface gameSurface;
 
-    float leftRight = 0;
-    float upDown = 0;
+    ball ball = new ball(50,50,BitmapFactory.decodeResource(getResources(),R.drawable.marble););
 
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        leftRight = event.values[0];
-        //upDown = event.values[1];
-    }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         gameSurface = new GameSurface(this);
         setContentView(gameSurface);
-        SensorManager sensorManager= (SensorManager)getSystemService(SENSOR_SERVICE);
+        /*SensorManager sensorManager= (SensorManager)getSystemService(SENSOR_SERVICE);
         Sensor sen = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(this, sen, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, sen, SensorManager.SENSOR_DELAY_NORMAL);*/
     }
 
     @Override
@@ -67,8 +57,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Thread gameThread;
         SurfaceHolder holder;
         volatile boolean running = false;
-        Bitmap ball;
         int ballX=0;
+        int ballY=0;
+        float ballVX = 0;
+        float ballVY = 0;
         int x=200;
         String sensorOutput="";
         Paint paintProperty;
@@ -76,10 +68,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         int screenWidth;
         int screenHeight;
 
+        float leftRight = 0;
+        float upDown = 0;
+
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            leftRight = -1*event.values[0];
+            upDown = event.values[1];
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+
         public GameSurface(Context context) {
             super(context);
             holder=getHolder();
-            ball= BitmapFactory.decodeResource(getResources(),R.drawable.marble);
 
 
             Display screenDisplay = getWindowManager().getDefaultDisplay();
@@ -108,9 +113,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                 canvas.drawText(sensorOutput,x,200,paintProperty);
 
-                canvas.drawBitmap( ball,(screenWidth/2) - ball.getWidth()/2 +ballX ,(screenHeight/2) - ball.getHeight(),null);
+                ball.velx(leftRight/20);
 
-                ballX+=leftRight;
+                ball.vely(upDown/20);
+
+                ball.update();
+
+                canvas.drawBitmap( ball.bitmap(),ball.x() ,ball.y(),null);
+
 
                 holder.unlockCanvasAndPost(canvas);
             }
@@ -132,15 +142,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         }
 
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            //tilt phone and change position
-
-        }
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-        }
     }//GameSurface
 }//Activity
+
