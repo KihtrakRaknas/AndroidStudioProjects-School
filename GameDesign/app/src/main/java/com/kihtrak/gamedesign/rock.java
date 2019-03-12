@@ -5,8 +5,8 @@ import android.graphics.BitmapFactory;
 
 public class rock extends ball{
 
-    public rock(int maxx, Bitmap b,int speed){
-        super((int)(Math.random()*maxx) , b.getHeight()/2, b);
+    public rock( Bitmap b,int speed,int screenWidth, int screenHeight){
+        super((int)(Math.random()*screenWidth) , b.getHeight()/2, b,screenWidth,screenHeight);
         vely(speed);
     }
 }
