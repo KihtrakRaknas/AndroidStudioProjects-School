@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     GameSurface gameSurface;
 
     MediaPlayer play;
+    MediaPlayer lazer;
+    MediaPlayer crash;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +50,23 @@ public class MainActivity extends AppCompatActivity {
         }catch (Exception e){
 
         }
+
+        lazer = MediaPlayer.create(this,R.raw.lazer);
+        try{
+            lazer.prepare();
+        }catch (Exception e){
+
+        }
+        crash = MediaPlayer.create(this,R.raw.);
+        try{
+            crash.prepare();
+        }catch (Exception e){
+
+        }
+
         play.start();
+        play.setLooping(true);
+
 
     }
 
@@ -149,8 +167,10 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         if(time>0)
                             time--;
-                        //if(time<=0)
-                        //this.cancel();
+                        if(time<=0) {
+                            play.start();
+                            //this.cancel();
+                        }
                     }
                 };
                 timdf.scheduleAtFixedRate(timT,0,1000);
@@ -201,8 +221,10 @@ public class MainActivity extends AppCompatActivity {
 
         public void bulletAdd(){
             if(time>0) {
-                if (!flash && bullets.size() < 2)
+                if (!flash && bullets.size() < 2) {
                     bullets.add(new bullet(ball.x, ball.top(), pewBit, screenWidth, screenHeight, upDown));
+                    lazer.start();
+                }
             }else{
                 flash = false;
                 time = 60;
@@ -215,6 +237,7 @@ public class MainActivity extends AppCompatActivity {
                 while(bullets.size()>0) {
                     astroids.remove(0);
                 }
+                play.start();
             }
         }
 
@@ -246,6 +269,8 @@ public class MainActivity extends AppCompatActivity {
                             flash = true;
                             if(score>=500)
                             score-=500;
+                            if(!crash.isPlaying())
+                                crash.start();
                         }
                         astroids.get(i).update();
                         canvas.drawBitmap(astroids.get(i).bitmap(), astroids.get(i).left(), astroids.get(i).top(), null);
