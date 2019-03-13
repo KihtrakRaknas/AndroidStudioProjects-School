@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         Sensor sen = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(this, sen, SensorManager.SENSOR_DELAY_NORMAL);*/
 
-        play = MediaPlayer.create(this,R.raw.wavy);
+        play = MediaPlayer.create(this,R.raw.back);
         try{
             play.prepare();
         }catch (Exception e){
