@@ -265,18 +265,22 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     for (int i = astroids.size() - 1; i != -1; i--) {
+                        boolean removed = false;
                         if (ball.isTouching(astroids.get(i))) {
                             flash = true;
+                            flashCount=0;
                             if(score>=500)
                             score-=500;
                             if(!crash.isPlaying())
                                 crash.start();
+                            removed=true;
+                            astroids.remove(i);
                         }
                         astroids.get(i).update();
                         canvas.drawBitmap(astroids.get(i).bitmap(), astroids.get(i).left(), astroids.get(i).top(), null);
-                        boolean removed = false;
+
                         for (int j = bullets.size() - 1; j != -1; j--) {
-                            if (bullets.get(j).isTouching(astroids.get(i))) {
+                            if (!removed && bullets.get(j).isTouching(astroids.get(i))) {
                                 astroids.remove(i);
                                 score+=1000;
                                 removed=true;
