@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         }catch (Exception e){
 
         }
-        crash = MediaPlayer.create(this,R.raw.);
+        crash = MediaPlayer.create(this,R.raw.crash);
         try{
             crash.prepare();
         }catch (Exception e){
