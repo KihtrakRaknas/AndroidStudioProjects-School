@@ -27,6 +27,7 @@ public class ball {
         setImg(ball);
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
+        genHitbox();
     }
 
     void setImg(Bitmap ball){
@@ -99,26 +100,40 @@ public class ball {
     }
 
     void genHitbox(){
+        if(left()>screenWidth) {
+            x = x % screenWidth;
+        }
+        while(right()<0) {
+            x = x + screenWidth;
+        }
+
+        if(top()>screenHeight) {
+            y = y % screenHeight;
+        }
+        while(bottom()<0) {
+            y = y + screenHeight;
+        }
         hitbox = new Rect(left(),top(),right(),bottom());
         newLeft = left();
         newRight = right();
         newTop = top();
         newBottom = bottom();
         if(left()<0){
-            newLeft = screenWidth - left();
-            newRight = screenWidth;
+            newLeft = screenWidth + left();
+            newRight = newLeft+ball.getWidth();
         }
         if(right()>screenWidth){
-            newLeft = 0;
             newRight = right()-screenWidth;
+            newLeft = newRight-ball.getWidth();
         }
         if(top()<0){
-            newTop = screenHeight - top();
-            newBottom = screenHeight;
+            newTop = screenHeight + top();
+            newBottom = newTop+ball.getHeight();
         }
         if(bottom()>screenHeight){
-            newTop = 0;
             newBottom = bottom()-screenHeight;
+            newTop = newBottom-ball.getHeight();
+
         }
         hitbox2 = new Rect(newLeft,newTop,newRight,newBottom);
     }
@@ -141,8 +156,8 @@ public class ball {
 
     boolean twoNeeded(){
         if(newRight == right() && newTop == top())
-            return true;
-        return false;
+            return false;
+        return true;
     }
 
     boolean isTouching(ball ball2){

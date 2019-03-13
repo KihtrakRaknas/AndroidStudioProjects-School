@@ -4,17 +4,23 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -26,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
     GameSurface gameSurface;
 
-
+    MediaPlayer play;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +41,15 @@ public class MainActivity extends AppCompatActivity {
         /*SensorManager sensorManager= (SensorManager)getSystemService(SENSOR_SERVICE);
         Sensor sen = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(this, sen, SensorManager.SENSOR_DELAY_NORMAL);*/
+
+        play = MediaPlayer.create(this,R.raw.wavy);
+        try{
+            play.prepare();
+        }catch (Exception e){
+
+        }
+        play.start();
+
     }
 
     @Override
@@ -56,18 +71,15 @@ public class MainActivity extends AppCompatActivity {
         final Bitmap rockBit = BitmapFactory.decodeResource(getResources(),R.drawable.rock);
         Bitmap ballBit = BitmapFactory.decodeResource(getResources(),R.drawable.spaceship);
         Bitmap ballDamBit = BitmapFactory.decodeResource(getResources(),R.drawable.spaceshipdamaged);
+        Bitmap pewBit = BitmapFactory.decodeResource(getResources(),R.drawable.pew);
         ball ball;
 
         Thread gameThread;
         SurfaceHolder holder;
         volatile boolean running = false;
         int time = 60;
-        int ballX=0;
-        int ballY=0;
-        float ballVX = 0;
-        float ballVY = 0;
-        int x=200;
-        String sensorOutput="";
+        int score = 0;
+
         Paint paintProperty;
 
         int screenWidth;
@@ -80,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         int flashCount = 0;
 
         ArrayList <rock> astroids = new ArrayList<rock>();
+        ArrayList <bullet> bullets = new ArrayList<bullet>();
 
         @Override
         public void onSensorChanged(SensorEvent event) {
@@ -91,6 +104,9 @@ public class MainActivity extends AppCompatActivity {
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
         }
+
+
+
 
         public GameSurface(Context context) {
             super(context);
@@ -110,18 +126,18 @@ public class MainActivity extends AppCompatActivity {
             sensorManager.registerListener(this,accelerometerSensor,sensorManager.SENSOR_DELAY_NORMAL);
 
             paintProperty= new Paint();
-            astroids.add(new rock( rockBit,astroidCount/5,screenWidth,screenHeight));
+            //astroids.add(new rock( rockBit,astroidCount/5,screenWidth,screenHeight));
             paintProperty.setTextSize(100);
+            paintProperty.setColor(Color.WHITE);
             try {
                 Timer timdf = new Timer();
                 TimerTask timT = new TimerTask() {
                     @Override
                     public void run() {
-                        //astroids.add(new rock( screenWidth,rockBit,astroidCount/5));
-                        //astroidCount++;
+                        astroids.add(new rock( rockBit,astroidCount/5,screenWidth,screenHeight));
                     }
                 };
-                timdf.scheduleAtFixedRate(timT,0,3000);
+                timdf.scheduleAtFixedRate(timT,0,2000);
             } catch(Exception e){
 
             }
@@ -131,9 +147,10 @@ public class MainActivity extends AppCompatActivity {
                 final TimerTask timT = new TimerTask() {
                     @Override
                     public void run() {
-                        time--;
-                        if(time<=0)
-                        this.cancel();
+                        if(time>0)
+                            time--;
+                        //if(time<=0)
+                        //this.cancel();
                     }
                 };
                 timdf.scheduleAtFixedRate(timT,0,1000);
@@ -170,11 +187,36 @@ public class MainActivity extends AppCompatActivity {
 
             }
 
+            setOnTouchListener(new OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    bulletAdd();
+                    return false;
+                }
+            });
+
         }
 
         int astroidCount = 10;
 
-
+        public void bulletAdd(){
+            if(time>0) {
+                if (!flash && bullets.size() < 2)
+                    bullets.add(new bullet(ball.x, ball.top(), pewBit, screenWidth, screenHeight, upDown));
+            }else{
+                flash = false;
+                time = 60;
+                score = 0;
+                ball = new ball(screenWidth/2,screenHeight-ballBit.getHeight()-10,ballBit,screenWidth,screenHeight);
+                astroidCount = 10;
+                while(astroids.size()>0) {
+                    astroids.remove(0);
+                }
+                while(bullets.size()>0) {
+                    astroids.remove(0);
+                }
+            }
+        }
 
 
         @Override
@@ -183,31 +225,79 @@ public class MainActivity extends AppCompatActivity {
                 if (holder.getSurface().isValid() == false)
                     continue;
 
+
                 Canvas canvas= holder.lockCanvas();
 
-                canvas.drawRGB(255,0,0);
-
-                canvas.drawText(sensorOutput,x,200,paintProperty);
+                canvas.drawRGB(0,0,0);
 
                 if(time>0) {
                     ball.velx(leftRight / 20);
-                    ball.vely(upDown / 20);
+                    if(score>20000) {
+                        ball.vely(upDown / 200);
+                    }
                     ball.update();
                     canvas.drawBitmap(ball.bitmap(), ball.x(), ball.y(), null);
                     if(ball.twoNeeded()){
-                        canvas.drawBitmap(ball.bitmap(), ball.hitBox2().centerX(), ball.hitBox2().centerY(), null);
+                        canvas.drawBitmap(ball.bitmap(), ball.newLeft(), ball.newTop(), null);
                     }
 
                     for (int i = astroids.size() - 1; i != -1; i--) {
                         if (ball.isTouching(astroids.get(i))) {
                             flash = true;
+                            if(score>=500)
+                            score-=500;
                         }
                         astroids.get(i).update();
                         canvas.drawBitmap(astroids.get(i).bitmap(), astroids.get(i).left(), astroids.get(i).top(), null);
-                        if(astroids.get(i).bottom()>screenHeight){
+                        boolean removed = false;
+                        for (int j = bullets.size() - 1; j != -1; j--) {
+                            if (bullets.get(j).isTouching(astroids.get(i))) {
+                                astroids.remove(i);
+                                score+=1000;
+                                removed=true;
+                                bullets.remove(j);
+                                astroidCount++;
+                                break;
+                            }
+                        }
+                        if(!removed&&astroids.get(i).top()>screenHeight){
                             astroids.remove(i);
+                            score+=1;
                         }
                     }
+
+                    for (int i = bullets.size() - 1; i != -1; i--) {
+                        bullets.get(i).update();
+                        canvas.drawBitmap(bullets.get(i).bitmap(), bullets.get(i).left(), bullets.get(i).top(), null);
+                        if(bullets.get(i).bottom()<0||bullets.get(i).state()==3){
+                            bullets.remove(i);
+                        }
+                    }
+
+                    paintProperty.setTextSize(100);
+
+                    canvas.drawText(""+time,screenWidth-120,100,paintProperty);
+
+                    canvas.drawText(""+score,20,100,paintProperty);
+                }else{
+                    paintProperty.setTextSize(120);
+                    Rect textRect = new Rect();
+                    String text;
+                    text ="GAME OVER";
+                    paintProperty.getTextBounds(text,0, text.length(),textRect);
+                    canvas.drawText(text,screenWidth/2-textRect.width()/2,screenHeight/2-textRect.height()/2-300,paintProperty);
+
+                    text ="SCORE: "+score;
+                    paintProperty.getTextBounds(text,0, text.length(),textRect);
+                    canvas.drawText(text,screenWidth/2-textRect.width()/2,screenHeight/2-textRect.height()/2,paintProperty);
+
+                    text ="TAP ANYWHERE";
+                    paintProperty.getTextBounds(text,0, text.length(),textRect);
+                    canvas.drawText(text,screenWidth/2-textRect.width()/2,screenHeight/2-textRect.height()/2+300,paintProperty);
+
+                    text ="TO PLAY AGAIN";
+                    paintProperty.getTextBounds(text,0, text.length(),textRect);
+                    canvas.drawText(text,screenWidth/2-textRect.width()/2,screenHeight/2-textRect.height()/2+450,paintProperty);
                 }
 
                 holder.unlockCanvasAndPost(canvas);
