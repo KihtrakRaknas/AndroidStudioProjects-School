@@ -223,6 +223,13 @@ public class MainActivity extends AppCompatActivity {
             if(time>0) {
                 if (!flash && bullets.size() < 2) {
                     bullets.add(new bullet(ball.x, ball.top(), pewBit, screenWidth, screenHeight, upDown));
+                    lazer.stop();
+                    lazer = MediaPlayer.create(MainActivity.this,R.raw.lazer);
+                    try{
+                        lazer.prepare();
+                    }catch (Exception e){
+
+                    }
                     lazer.start();
                 }
             }else{
@@ -271,8 +278,17 @@ public class MainActivity extends AppCompatActivity {
                             flashCount=0;
                             if(score>=500)
                             score-=500;
-                            if(!crash.isPlaying())
+                            if(crash.isPlaying()) {
+                                crash.stop();
+                                crash = MediaPlayer.create(MainActivity.this,R.raw.crash);
+                                try{
+                                    crash.prepare();
+                                }catch (Exception e){
+
+                                }
+                            }
                                 crash.start();
+
                             removed=true;
                             astroids.remove(i);
                         }
@@ -320,6 +336,7 @@ public class MainActivity extends AppCompatActivity {
                     paintProperty.getTextBounds(text,0, text.length(),textRect);
                     canvas.drawText(text,screenWidth/2-textRect.width()/2,screenHeight/2-textRect.height()/2,paintProperty);
 
+                    paintProperty.setTextSize(80);
                     text ="TAP ANYWHERE";
                     paintProperty.getTextBounds(text,0, text.length(),textRect);
                     canvas.drawText(text,screenWidth/2-textRect.width()/2,screenHeight/2-textRect.height()/2+300,paintProperty);
