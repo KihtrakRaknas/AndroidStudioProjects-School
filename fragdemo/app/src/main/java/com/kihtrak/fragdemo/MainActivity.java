@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements top.ReceiveString {
     TextView textView;
     Button button;
 
@@ -30,6 +30,11 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.add(R.id.botfram,new bottom());
 
         fragmentTransaction.commit();
+
+    }
+
+    @Override
+    public void receive(String str) {
 
     }
 }

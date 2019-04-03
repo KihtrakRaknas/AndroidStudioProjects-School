@@ -21,6 +21,14 @@ public class top extends Fragment {
     TextView info;
     TextView activityTxt;
 
+    ReceiveString receiveString;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        receiveString = (ReceiveString)context;
+    }
+
     Button btn;
     @Override
     public View onCreateView( LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
@@ -34,7 +42,7 @@ public class top extends Fragment {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                info.setText("CLICKED");
+                receiveString.receive("CLICKED");
             }
         });
         activityTxt = getActivity().findViewById(R.id.textView);
@@ -44,4 +52,10 @@ public class top extends Fragment {
 
                 return fragmentView;
     }
+
+    public interface ReceiveString{
+        public void receive(String str);
+    }
+
+    //ReceiveString ;
 }
