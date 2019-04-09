@@ -7,7 +7,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Iterator;
+
 public class gradeDisplay extends AppCompatActivity {
+    JSONObject grades;
+    int mp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,14 +23,26 @@ public class gradeDisplay extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+        String data = getIntent().getStringExtra("grades");
+        mp = getIntent().getIntExtra("mp",1);
+
+        try {
+            grades = new JSONObject(data);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //
+        Iterator<String> keys = grades.keys();
+        while(keys.hasNext()) {
+            String key = keys.next();
+            try {
+                if (grades.get(key) instanceof JSONObject) {
+                    ((JSONObject) grades.get(key)).getJSONObject("MP"+mp).getString("avg");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        });
+        }
     }
 
 }
