@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mp=position+1;
-                Toast.makeText(MainActivity.this, "MP"+mp+"selected", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "MP"+mp+" selected", Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -85,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(String... zoop) {
             try {
                 Log.d("datatest","te3st");
-//                URL url = new URL("http://gradeview.herokuapp.com/?username="+zoop[0]+"&password="+zoop[1]);
-                URL url = new URL("http://gradeview.herokuapp.com/?username=10013096@sbstudents.org&password=Tint%40%2579");
+                URL url = new URL("http://gradeview.herokuapp.com/?username="+zoop[0]+"&password="+zoop[1]);
+                //URL url = new URL("http://gradeview.herokuapp.com/?username=10013096@sbstudents.org&password=Tint%40%2579");
                 URLConnection test = url.openConnection();
 
                     /*URLConnection test = new URLConnection(url) {
@@ -119,7 +119,8 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
             if(grades!=null){
                 try {
-                    if(grades.getString("Status") == "loading...") {
+                    Log.d("datatest", grades.getString("Status"));
+                    if(grades.getString("Status").equals("loading...")) {
                         Toast.makeText(MainActivity.this, "Loading try again", Toast.LENGTH_LONG).show();
                     }else{
                         if(mp!=0) {
