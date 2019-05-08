@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -22,6 +23,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -66,7 +68,14 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        try {
+            BufferedReader red = new BufferedReader(new InputStreamReader(openFileInput("info.json")));
+            JSONObject json = new JSONObject(red.readLine());
+            ((EditText)findViewById(R.id.user)).setText(json.getString("username"));
+            ((EditText)findViewById(R.id.pass)).setText(json.getString("password"));
+        }catch (Exception w){
 
+        }
 
 
     }
@@ -124,6 +133,22 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Loading try again", Toast.LENGTH_LONG).show();
                     }else{
                         if(mp!=0) {
+                            //Save Username & Password
+                            JSONObject data = new JSONObject();
+                            try {
+                                data.put("username",((EditText)findViewById(R.id.user)).getText());
+                                data.put("password",((EditText)findViewById(R.id.pass)).getText());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            try{
+                                OutputStreamWriter out = new OutputStreamWriter(openFileOutput("info.json",MODE_PRIVATE));
+                                out.write(data.toString());
+                                out.close();
+                            }catch (Exception e){
+
+                            }
+
                             intent.putExtra("mp", mp);
                             intent.putExtra("grades", grades.toString());
                             startActivity(intent);
